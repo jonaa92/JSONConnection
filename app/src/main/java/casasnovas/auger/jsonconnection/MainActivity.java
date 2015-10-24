@@ -84,24 +84,30 @@ public class MainActivity extends AppCompatActivity {
         et = (EditText) findViewById(R.id.etPass);
         pass  = et.getText().toString();
         bl.execute(user, pass);
-        if (bl.get()) {
             /*TODO: La funcion isUserFromDb deberá tambien proporcionar el nombre del usuario y tal, todo esto se le tiene que pasar al intent para que la activity que lo recibe lo pueda mostrar*/
-            Toast.makeText(this, "CORRECT!", Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(getApplicationContext(), correctActivity.class);
-            startActivity(i);
-        }
-        else Toast.makeText(this, "INCORRECT :(", Toast.LENGTH_SHORT).show();
-
     }
 
-    private class backgroundLogin extends AsyncTask<String,Void,Boolean> {
+    private class backgroundLogin extends AsyncTask<String,Void,Void> {
 
+        boolean result = false;
+        String name = null;
+        String email = null;
 
         @Override
-        protected Boolean doInBackground(String... params) {
-            return URLconnect(params[0], params[1]);
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (result){
+                Intent i = new Intent(getApplicationContext(), correctActivity.class);
+                startActivity(i);
+            }
         }
-         private boolean URLconnect (String email, String pass){
+
+        @Override
+        protected Void doInBackground(String... params) {
+            URLconnect(params[0], params[1]);
+            return null;
+        }
+         private void URLconnect (String email, String pass){
             try{
                 //Connection set-up
                 URL url = new URL("https://raspynet.herokuapp.com/login");
@@ -135,11 +141,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 Log.d("BackgroundLogin", bufferLectura);
 
-                return isUserFromDB(bufferLectura);
+                result = isUserFromDB(bufferLectura);
 
             }catch (IOException e) {
                 Log.d("BackgroundLogin", "Excep: " + e.getMessage());
-                return false;
+                result = false;
             }
         }
         private boolean isUserFromDB (String response){
