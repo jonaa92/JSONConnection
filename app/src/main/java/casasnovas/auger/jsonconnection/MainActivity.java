@@ -3,37 +3,17 @@ package casasnovas.auger.jsonconnection;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -43,14 +23,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     @Override
@@ -83,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         et = (EditText) findViewById(R.id.etPass);
         pass  = et.getText().toString();
         bl.execute(user, pass);
+        Button b = (Button) findViewById(R.id.button);
+        b.setText(" CONNECTING... ");
+        b.setEnabled(false);
             /*TODO: La funcion isUserFromDb deberá tambien proporcionar el nombre del usuario y tal, todo esto se le tiene que pasar al intent para que la activity que lo recibe lo pueda mostrar*/
     }
 
@@ -96,6 +71,13 @@ public class MainActivity extends AppCompatActivity {
             if (result){
                 Intent i = new Intent(getApplicationContext(), correctActivity.class);
                 startActivity(i);
+            }
+            else {
+                notRegisteredDialog nrd = notRegisteredDialog.newInstance("yomesmo");
+                nrd.show(getFragmentManager(), "10");
+                Button b = (Button) findViewById(R.id.button);
+                b.setText(R.string.connect);
+                b.setEnabled(true);
             }
         }
 
