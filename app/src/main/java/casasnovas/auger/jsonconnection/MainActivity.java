@@ -36,7 +36,6 @@ import java.util.concurrent.ExecutionException;
 import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String urlConnect = "https://raspynet.herokuapp.com/login";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,8 +89,6 @@ public class MainActivity extends AppCompatActivity {
     private class backgroundLogin extends AsyncTask<String,Void,Void> {
 
         boolean result = false;
-        String name = null;
-        String email = null;
 
         @Override
         protected void onPostExecute(Void aVoid) {
@@ -109,38 +106,9 @@ public class MainActivity extends AppCompatActivity {
         }
          private void URLconnect (String email, String pass){
             try{
-                //Connection set-up
-                URL url = new URL("https://raspynet.herokuapp.com/login");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-                //POST params
-                //String urlParameter = "email=prova@gmail.com&password=1234";
                 String urlParameters = "email="+email+"&password="+pass;
-                Log.d("patata", urlParameters);
-                byte[] postData = urlParameters.getBytes(Charset.forName("UTF-8"));
-                int postDataLength = postData.length;
-
-                //Connection params
-                connection.setDoOutput(true);
-                connection.setInstanceFollowRedirects(false);
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                connection.setRequestProperty("charset", "utf-8");
-                connection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-                connection.setUseCaches(false);
-
-                //POST data
-                connection.getOutputStream().write(postData);
-
-                //Retrieve answer from server
-                Reader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-                String bufferLectura=null;
-                for ( int c = in.read(); c != -1; c = in.read() ) {
-                    //System.out.print((char)c);
-                    bufferLectura += (char) c;
-                }
-                Log.d("BackgroundLogin", bufferLectura);
-
+                String bufferLectura= serverInterface.doPost("https://raspynet.herokuapp.com/login", urlParameters);
+                Log.d("urlconnect", bufferLectura);
                 result = isUserFromDB(bufferLectura);
 
             }catch (IOException e) {
