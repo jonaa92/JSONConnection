@@ -3,6 +3,7 @@ package casasnovas.auger.jsonconnection;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,12 +26,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -57,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         bl.execute(user, pass);
         Button b = (Button) findViewById(R.id.button);
         b.setText(" CONNECTING... ");
+        /*Snackbar.make(b, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();*/
         b.setEnabled(false);
             /*TODO: La funcion isUserFromDb deberá tambien proporcionar el nombre del usuario y tal, todo esto se le tiene que pasar al intent para que la activity que lo recibe lo pueda mostrar*/
     }
@@ -73,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
             else {
-                notRegisteredDialog nrd = notRegisteredDialog.newInstance("yomesmo");
+                notRegisteredDialog nrd = notRegisteredDialog.newInstance("backgroundLogin");
                 nrd.show(getFragmentManager(), "10");
                 Button b = (Button) findViewById(R.id.button);
                 b.setText(R.string.connect);
@@ -89,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
          private void URLconnect (String email, String pass){
             try{
                 String urlParameters = "email="+email+"&password="+pass;
-                String bufferLectura= serverInterface.doPost("https://raspynet.herokuapp.com/login", urlParameters);
+                String bufferLectura = serverInterface.doPost("https://raspynet.herokuapp.com/login", urlParameters);
                 Log.d("urlconnect", bufferLectura);
                 result = isUserFromDB(bufferLectura);
 
