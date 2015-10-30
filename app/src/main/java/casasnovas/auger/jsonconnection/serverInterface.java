@@ -16,30 +16,30 @@ public class serverInterface {
 
     public static String doPost (final String url, final String urlParameters) throws IOException {
         final String charset = "UTF-8";
-        // Create the connection
+        // Conexion
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         byte[] postData = urlParameters.getBytes(Charset.forName("UTF-8"));
         int postDataLength = postData.length;
-        // setDoOutput(true) implicitly set's the request type to POST
+        // connection params (de POST)
         connection.setDoOutput(true);
         connection.setInstanceFollowRedirects(false);
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         connection.setRequestProperty("charset", "utf-8");
-        connection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+        connection.setRequestProperty("Content-Length", Integer.toString(postDataLength)); // AQUI
         connection.setUseCaches(false);
 
-        // Write to the connection
+        // Hacer el post de postData (tiene que ser un byte[]. Arriba se ha definido el lenght
         OutputStream output = connection.getOutputStream();
         output.write(postData);
         output.close();
 
-        // Check the error stream first, if this is null then there have been no issues with the request
+        // Check the error stream
         InputStream inputStream = connection.getErrorStream();
         if (inputStream == null)
             inputStream = connection.getInputStream();
 
-        // Read everything from our stream
+        // Read response from servver
         BufferedReader responseReader = new BufferedReader(new InputStreamReader(inputStream, charset));
 
         String inputLine;
@@ -49,7 +49,7 @@ public class serverInterface {
             response.append(inputLine);
         }
         responseReader.close();
-
+        //Devolvemos la respuesta del server
         return response.toString();
 
     }
