@@ -72,7 +72,7 @@ public class NewUserActivity extends AppCompatActivity {
         }
 
         private void postNewUser(String user, String passs, String  mail) throws IOException {
-            Random r = new Random();
+            //Random r = new Random(); -> Token ha de ser random?
             Integer token = 300;
             String postData = "name:"+user+"&email:"+mail+"&passw:"+passs+"&token:"+token.toString();
             String resp = serverInterface.doPost("https://raspynet.herokuapp.com/users", postData);
