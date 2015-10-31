@@ -1,5 +1,7 @@
 package casasnovas.auger.jsonconnection;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +36,7 @@ public class serverInterface {
         output.write(postData);
         output.close();
 
+
         // Check the error stream
         InputStream inputStream = connection.getErrorStream();
         if (inputStream == null)
@@ -49,6 +52,7 @@ public class serverInterface {
             response.append(inputLine);
         }
         responseReader.close();
+        Log.d("urlconnect", "SERVER RESPONSE: " + response);
         //Devolvemos la respuesta del server
         return response.toString();
 

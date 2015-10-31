@@ -71,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            Button b = (Button) findViewById(R.id.button);
+            b.setText(R.string.connect);
+            b.setEnabled(true);
             if (result){
                 Intent i = new Intent(getApplicationContext(), correctActivity.class);
                 startActivity(i);
@@ -78,9 +81,6 @@ public class MainActivity extends AppCompatActivity {
             else {
                 notRegisteredDialog nrd = notRegisteredDialog.newInstance("backgroundLogin");
                 nrd.show(getFragmentManager(), "10");
-                Button b = (Button) findViewById(R.id.button);
-                b.setText(R.string.connect);
-                b.setEnabled(true);
             }
         }
 
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             try{
                 String urlParameters = "email="+email+"&password="+pass;
                 String bufferLectura = serverInterface.doPost("https://raspynet.herokuapp.com/login", urlParameters);
-                Log.d("urlconnect", bufferLectura);
+//                Log.d("urlconnect", bufferLectura);
                 result = isUserFromDB(bufferLectura);
 
             }catch (IOException e) {
