@@ -12,6 +12,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.Random;
 
@@ -40,7 +43,7 @@ public class NewUserActivity extends AppCompatActivity {
         password = et.getText().toString();
 
         backgroundRegister br = new backgroundRegister();
-        br.execute(username, email, password);
+        br.execute(username, password, email);
         Button b = (Button) findViewById(R.id.bRegistrar);
         b.setText(" CONNECTING... ");
     }
@@ -73,13 +76,24 @@ public class NewUserActivity extends AppCompatActivity {
 
         private void postNewUser(String user, String passs, String  mail) throws IOException {
             //Random r = new Random(); -> Token ha de ser random?
-            Integer token = 300;
-            String postData = "name:"+user+"&email:"+mail+"&passw:"+passs+"&token:"+token.toString();
+            //Integer token = 6789;
+            //String postData = "name:"+user+",email:"+mail+",passw:"+passs+",token:"+token.toString();
+            String postData = createJsonObject("Auger","1234", "auger@gmail.com");
             String resp = serverInterface.doPost("https://raspynet.herokuapp.com/users", postData);
             b = resp.contains("Success");
-
         }
-
     }
-
+    private String createJsonObject (String user, String pass, String mail){
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("name", user);
+            jsonObject.put("email", mail);
+            jsonObject.put("passw", pass);
+            jsonObject.put("token", "345");
+            return jsonObject.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

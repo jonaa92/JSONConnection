@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -19,6 +20,7 @@ public class serverInterface {
     public static String doPost (final String url, final String urlParameters) throws IOException {
         final String charset = "UTF-8";
         // Conexion
+        Log.d("urlconnect", urlParameters);
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         byte[] postData = urlParameters.getBytes(Charset.forName("UTF-8"));
         int postDataLength = postData.length;
@@ -35,7 +37,9 @@ public class serverInterface {
         OutputStream output = connection.getOutputStream();
         output.write(postData);
         output.close();
-
+//        OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());
+//        osw.write(urlParameters,0,postDataLength);
+//        osw.flush();
 
         // Check the error stream
         InputStream inputStream = connection.getErrorStream();
@@ -52,6 +56,7 @@ public class serverInterface {
             response.append(inputLine);
         }
         responseReader.close();
+        Log.d("urlconnect", "SERVER RESPONSE CODE: " + connection.getResponseCode());
         Log.d("urlconnect", "SERVER RESPONSE: " + response);
         //Devolvemos la respuesta del server
         return response.toString();

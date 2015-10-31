@@ -3,6 +3,7 @@ package casasnovas.auger.jsonconnection;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.sax.StartElementListener;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Intent i = new Intent(getApplicationContext(), NewUserActivity.class);
+        startActivity(i);
 
     }
 
@@ -92,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
          private void URLconnect (String email, String pass){
             try{
                 String urlParameters = "email="+email+"&password="+pass;
+                Log.d("urlconnect", urlParameters);
                 String bufferLectura = serverInterface.doPost("https://raspynet.herokuapp.com/login", urlParameters);
 //                Log.d("urlconnect", bufferLectura);
                 result = isUserFromDB(bufferLectura);
