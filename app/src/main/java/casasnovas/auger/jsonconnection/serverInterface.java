@@ -7,9 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 
 /**
@@ -60,6 +61,12 @@ public class serverInterface {
         Log.d("urlconnect", "SERVER RESPONSE: " + response);
         //Devolvemos la respuesta del server
         return response.toString();
+
+    }
+
+    public static void provaFTP () throws IOException {
+        URL url = new URL ("ftp://anonymous:@raspynet.no-ip.org");
+        URLConnection urlConnection = url.openConnection();
 
     }
 }

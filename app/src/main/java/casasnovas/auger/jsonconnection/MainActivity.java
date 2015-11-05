@@ -24,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Intent i = new Intent(getApplicationContext(), NewUserActivity.class);
-        startActivity(i);
+//        Intent i = new Intent(getApplicationContext(), NewUserActivity.class);
+//        startActivity(i);
 
     }
 
@@ -67,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
             /*TODO: La funcion isUserFromDb deberá tambien proporcionar el nombre del usuario y tal, todo esto se le tiene que pasar al intent para que la activity que lo recibe lo pueda mostrar*/
     }
 
+    public void ftpBypass(View v){
+        Intent i = new Intent(getApplicationContext(), FTPActivity.class);
+        startActivity(i);
+    }
+
     private class backgroundLogin extends AsyncTask<String,Void,Void> {
 
         boolean result = false;
@@ -86,13 +91,12 @@ public class MainActivity extends AppCompatActivity {
                 nrd.show(getFragmentManager(), "10");
             }
         }
-
         @Override
         protected Void doInBackground(String... params) {
             URLconnect(params[0], params[1]);
             return null;
         }
-         private void URLconnect (String email, String pass){
+        private void URLconnect (String email, String pass){
             try{
                 String urlParameters = "email="+email+"&password="+pass;
                 Log.d("urlconnect", urlParameters);

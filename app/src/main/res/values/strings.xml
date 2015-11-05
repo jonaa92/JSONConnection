@@ -6,4 +6,5 @@
     <string name="noButton">No</string>
     <string name="title_activity_new_user">NewUserActivity</string>
     <string name="connect">CONNECT</string>
+    <string name="title_activity_ftp">FTPActivity</string>
 </resources>

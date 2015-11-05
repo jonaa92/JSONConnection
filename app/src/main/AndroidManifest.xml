@@ -30,6 +30,11 @@
             android:label="@string/title_activity_new_user"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity
+            android:name=".FTPActivity"
+            android:label="@string/title_activity_ftp"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>
