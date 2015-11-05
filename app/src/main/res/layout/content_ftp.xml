@@ -16,4 +16,12 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:onClick="button" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bFTPupload"
+        android:onClick="button"
+        android:layout_below="@+id/bFTP"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

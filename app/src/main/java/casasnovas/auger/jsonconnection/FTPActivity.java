@@ -2,6 +2,7 @@ package casasnovas.auger.jsonconnection;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class FTPActivity extends AppCompatActivity {
 
@@ -22,8 +24,12 @@ public class FTPActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Button b = (Button) findViewById(R.id.bFTP);
-        b.setText(R.string.connect);
+        b.setText("DOWNLOAD");
         b.setEnabled(true);
+
+        Button b1 = (Button) findViewById(R.id.bFTPupload);
+        b1.setText("UPLOAD");
+        b1.setEnabled(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -36,30 +42,54 @@ public class FTPActivity extends AppCompatActivity {
     }
     public void button (View v){
         backgroundFTP bf = new backgroundFTP();
-        bf.execute();
-        Button b = (Button) findViewById(R.id.bFTP);
-        b.setText(" CONNECTING... ");
-        b.setEnabled(false);
+        switch (v.getId()){
+            case R.id.bFTP:
+                bf.execute("download");
+                Button b = (Button) findViewById(R.id.bFTP);
+                b.setText(" CONNECTING... ");
+                b.setEnabled(false);
+                break;
+            case R.id.bFTPupload:
+                bf.execute("upload");
+                Button b1 = (Button) findViewById(R.id.bFTPupload);
+                b1.setText(" UPLOADING... ");
+                b1.setEnabled(false);
+                break;
+        }
+
     }
 
-    private class backgroundFTP extends AsyncTask <Void, Void, Void>{
+    private class backgroundFTP extends AsyncTask <String, Void, Void>{
 
         @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                serverInterface.provaFTP();
-            } catch (IOException e) {
-                Log.d("ftpconnect", "Exception: " + e.getMessage());
+        protected Void doInBackground(String... params) {
+            if (params[0].equals("download")) {
+                try {
+                    serverInterface.downloadFTP("anonymous", "mailinventat", "dir/file", Environment.getExternalStorageDirectory().getPath() + "/download/file");
+                } catch (IOException e) {
+                    Log.d("ftpconnectDownload", "Exception: " + e.getMessage());
+                }
+                return null;
             }
-            return null;
+            else {
+                try {
+                    serverInterface.uploadFTP("anonymous", "mailinventat", Environment.getExternalStorageDirectory().getPath() + "/download/fileprova", "dir/fileprova");
+                } catch (IOException e) {
+                    Log.d("ftpconnectUpload", "Exception: " + e.getMessage());
+                }
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Button b = (Button) findViewById(R.id.bFTP);
-            b.setText(R.string.connect);
+            b.setText("DOWNLOAD");
             b.setEnabled(true);
+            Button b1 = (Button) findViewById(R.id.bFTPupload);
+            b1.setText("UPLOAD");
+            b1.setEnabled(true);
         }
     }
 
