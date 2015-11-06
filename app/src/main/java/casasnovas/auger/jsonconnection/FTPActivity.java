@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -41,7 +42,7 @@ public class FTPActivity extends AppCompatActivity {
         });
     }
     public void button (View v){
-        backgroundFTP bf = new backgroundFTP();
+        final backgroundFTP bf = new backgroundFTP();
         switch (v.getId()){
             case R.id.bFTP:
                 bf.execute("download");
@@ -50,10 +51,18 @@ public class FTPActivity extends AppCompatActivity {
                 b.setEnabled(false);
                 break;
             case R.id.bFTPupload:
-                bf.execute("upload");
-                Button b1 = (Button) findViewById(R.id.bFTPupload);
-                b1.setText(" UPLOADING... ");
-                b1.setEnabled(false);
+                FileChooser fc = new FileChooser(this);
+                fc.setFileListener(new FileChooser.FileSelectedListener() {
+                    @Override
+                    public void fileSelected(File file) {
+                        Log.d("filechooser", "File to upload: " + file.getPath());
+                        bf.execute("upload", file.getPath());
+                        Button b1 = (Button) findViewById(R.id.bFTPupload);
+                        b1.setText(" UPLOADING... ");
+                        b1.setEnabled(false);
+
+                    }
+                }).showDialog();
                 break;
         }
 
@@ -73,7 +82,7 @@ public class FTPActivity extends AppCompatActivity {
             }
             else {
                 try {
-                    serverInterface.uploadFTP("anonymous", "mailinventat", Environment.getExternalStorageDirectory().getPath() + "/download/fileprova", "dir/fileprova");
+                    serverInterface.uploadFTP("anonymous", "mailinventat", params[1], "dir/fileprova");
                 } catch (IOException e) {
                     Log.d("ftpconnectUpload", "Exception: " + e.getMessage());
                 }
