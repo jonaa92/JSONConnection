@@ -71,8 +71,8 @@ public class FTPActivity extends AppCompatActivity {
                 b.setEnabled(false);
                 break;
             case R.id.bFTPupload:
-                FileChooser fc = new FileChooser(this);
-                fc.setFileListener(new FileChooser.FileSelectedListener() {
+                fileChooser fc = new fileChooser(this);
+                fc.setFileListener(new fileChooser.FileSelectedListener() {
                     @Override
                     public void fileSelected(File file) {
                         Log.d("filechooser", "File to upload: " + file.getPath());
