@@ -9,7 +9,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.SimpleExpandableListAdapter;
+import android.widget.TextView;
+
+import org.apache.commons.net.ftp.FTPFile;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +26,16 @@ import java.util.Objects;
 
 public class FTPActivity extends AppCompatActivity {
 
+
+    /*
+      backgroundFTP Commands:
+        "upload" (backgroundftp.execute("upload")) -> Uploads a file to server
+        "download" -> Downloads a file from the server
+        "ls" -> ls files
+        "delete" -> delete file selected
+     */
+    FTPFile[] filesystem;
+    String location, itemSelectedName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,17 +51,18 @@ public class FTPActivity extends AppCompatActivity {
         b1.setText("UPLOAD");
         b1.setEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        location = "dir";
+        itemSelectedName = null;
+        TextView tv = (TextView) findViewById(R.id.tvCurrent);
+        tv.setText("Current directory: " + location);
+        backgroundFTP bf;
+        bf = new backgroundFTP();
+        bf.execute("ls");
+
     }
     public void button (View v){
-        final backgroundFTP bf = new backgroundFTP();
+        final backgroundFTP bf;
+        bf = new backgroundFTP();
         switch (v.getId()){
             case R.id.bFTP:
                 bf.execute("download");
@@ -56,7 +76,7 @@ public class FTPActivity extends AppCompatActivity {
                     @Override
                     public void fileSelected(File file) {
                         Log.d("filechooser", "File to upload: " + file.getPath());
-                        bf.execute("upload", file.getPath());
+                        bf.execute("upload", file.getPath(), file.getName());
                         Button b1 = (Button) findViewById(R.id.bFTPupload);
                         b1.setText(" UPLOADING... ");
                         b1.setEnabled(false);
@@ -64,34 +84,73 @@ public class FTPActivity extends AppCompatActivity {
                     }
                 }).showDialog();
                 break;
+            case R.id.bRefresh:
+                final ListView listView = (ListView) findViewById(R.id.lvLS);
+                String array[] = new String[filesystem.length];
+                for (int i=0; i<filesystem.length; ++i) array[i] = filesystem[i].getName();
+                listView.setAdapter(new ArrayAdapter<>(getApplication().getApplicationContext(), R.layout.listviewitem, R.id.listviewitemtext, array));
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        /*TODO: para hacer que se mantenga seleccionado un item, hay que crear un layout nuevo*/
+                        TextView selectedItem = (TextView) findViewById(R.id.tvSelectedItem);
+                        selectedItem.setText(filesystem[position].getName());
+                        itemSelectedName = filesystem[position].getName();
+                    }
+                });
+                break;
+            case R.id.bDelete:
+                bf.execute("delete");
         }
 
     }
+
 
     private class backgroundFTP extends AsyncTask <String, Void, Void>{
 
         @Override
         protected Void doInBackground(String... params) {
-            if (params[0].equals("download")) {
-                try {
-                    serverInterface.downloadFTP("anonymous", "mailinventat", "dir/file", Environment.getExternalStorageDirectory().getPath() + "/download/file");
-                } catch (IOException e) {
-                    Log.d("ftpconnectDownload", "Exception: " + e.getMessage());
-                }
-                return null;
+            switch (params[0]) {
+                case "download":
+                    try {
+                        if (itemSelectedName != null) {
+                            serverInterface.downloadFTP("anonymous", "mailinventat", location + "/" + itemSelectedName, Environment.getExternalStorageDirectory().getPath() + "/download/"+itemSelectedName);
+                        }
+
+                    } catch (IOException e) {
+                        Log.d("ftpconnectDownload", "Exception: " + e.getMessage());
+                    }
+                    break;
+                case "upload":
+                    try {
+                        serverInterface.uploadFTP("anonymous", "mailinventat", params[1], "dir/" + params[2]);
+                    } catch (IOException e) {
+                        Log.d("ftpconnectUpload", "Exception: " + e.getMessage());
+                    }
+                    break;
+                case "ls":
+                    try {
+                        filesystem = serverInterface.lsFTP(location, "anonymous", "patata");
+                    } catch (IOException e) {
+                        Log.d("ftpconnectLS", "Exception: " + e.getMessage());
+                    }
+                    break;
+                case "delete":
+                    try {
+                        if (itemSelectedName != null) {
+                            /*TODO: crear un dialog de "estas seguro de querer eliminar?" */
+                            serverInterface.deletefile(location + "/" + itemSelectedName, "anonymous", "patata");
+                        }
+                    } catch (IOException e) {
+                        Log.d("ftpconnectDelete", "Exception: " +e.getMessage());
+                    }
             }
-            else {
-                try {
-                    serverInterface.uploadFTP("anonymous", "mailinventat", params[1], "dir/fileprova");
-                } catch (IOException e) {
-                    Log.d("ftpconnectUpload", "Exception: " + e.getMessage());
-                }
-                return null;
-            }
+            return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            //Restauramos el valor de los botones
             super.onPostExecute(aVoid);
             Button b = (Button) findViewById(R.id.bFTP);
             b.setText("DOWNLOAD");
@@ -101,5 +160,6 @@ public class FTPActivity extends AppCompatActivity {
             b1.setEnabled(true);
         }
     }
+
 
 }
